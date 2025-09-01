@@ -4,10 +4,10 @@ $(document).ready(function () {
     if (document.getElementById("gridClientes"))
         $('#gridClientes').jtable({
             title: 'Clientes',
-            paging: true, //Enable paging
-            pageSize: 5, //Set page size (default: 10)
-            sorting: true, //Enable sorting
-            defaultSorting: 'Nome ASC', //Set default sorting
+            paging: true, 
+            pageSize: 5,
+            sorting: true,
+            defaultSorting: 'Nome ASC',
             actions: {
                 listAction: urlClienteList,
             },
@@ -29,36 +29,64 @@ $(document).ready(function () {
                 Excluir: {
                     title: '',
                     display: function (data) {
-                        return `<button class="btn btn-danger btn-sm btnExcluirCliente" data-id="${data.record.Id}">Excluir</button>`;
+                        return `<button class="btn btn-danger btn-sm btnExcluirCliente" data-toggle="modal" data-target="#excluiClienteModal" data-id="${data.record.Id}">Excluir</button>`;
                     }
                 }
             }
         });
 
-    //Load student list from server
     if (document.getElementById("gridClientes"))
         $('#gridClientes').jtable('load');
 
     $('#gridClientes').on('click', '.btnExcluirCliente', function () {
         const id = $(this).data('id');
+        let random = Math.random().toString().replace('.', '');
+        let texto =
+            ' <div id="'+ random +'" class="modal fade">                                                                                ' +
+            '     <div class="modal-dialog">                                                                                            ' +
+            '         <div class="modal-content">                                                                                       ' +
+            '             <div class="modal-header">                                                                                    ' +
+            '                 <div class="flex-row">                                                                                    ' +
+            '                     <h4 class="modal-title">Excluir Cliente</h4>                                                          ' +
+            '                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">                          ' +
+            '                         <span aria-hidden="true">&times;</span>                                                           ' +
+            '                     </button>                                                                                             ' +
+            '                 </div>                                                                                                    ' +
+            '             </div>                                                                                                        ' +
+            '             <div class="modal-body">                                                                                      ' +
+            '                 <p>Deseja realmente excluir esse cliente</p>                                                              ' +
+            '             </div>                                                                                                        ' +
+            '             <div class="modal-footer">                                                                                    ' +
+            '                 <div class="w-100 text-center">                                                                           ' +
+            '                     <button type="button" class="btn btn-primary btnConfirmaExluir" data-id="'+ id +'">Confirmar</button> ' +
+            '                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>                ' +
+            '                 </div>                                                                                                    ' +
+            '             </div>                                                                                                        ' +
+            '         </div>                                                                                                            ' +
+            '     </div>                                                                                                                ' +
+            ' </div>                                                                                                                    '
 
-        if (!confirm("Tem certeza que deseja excluir este cliente?"))
-            return;
+        $('body').append(texto);
+        $('#' + random).modal('show');
 
-        $.ajax({
-            url: urlExclusao,
-            type: 'POST',
-            data: { id: id },
-            success: function (result) {
-                ModalDialog("Sucesso", result);
+        $('#' + random).on('click','.btnConfirmaExluir', function () {
+            $('#' + random).modal('toggle')
 
-                setTimeout(function () {
-                    location.reload();
-                }, 2000);
-            },
-            error: function (error) {
-                ModalDialog("Erro", "Erro ao alterar cliente. Detalhes: " + error.responseJSON);
-            }
-        });
+            $.ajax({
+                url: urlExclusao,
+                type: 'POST',
+                data: { id: id },
+                success: function (result) {
+                    ModalDialog("Sucesso", result);
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function (error) {
+                    ModalDialog("Erro", "Erro ao excluir cliente. Detalhes: " + error.responseJSON);
+                }
+            });
+        })
     });
 })
