@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FI.WebAtividadeEntrevista.Models;
+using FI.WebAtividadeEntrevista.Validators;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+using System.Text.RegularExpressions;
 
 namespace WebAtividadeEntrevista.Models
 {
@@ -12,7 +12,7 @@ namespace WebAtividadeEntrevista.Models
     public class ClienteModel
     {
         public long Id { get; set; }
-        
+
         /// <summary>
         /// CEP
         /// </summary>
@@ -67,12 +67,22 @@ namespace WebAtividadeEntrevista.Models
         /// </summary>
         public string Telefone { get; set; }
 
+        private string _cpf;
+
         /// <summary>
         /// CPF
         /// </summary>
         [Required]
-        [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "Digite um CPF válido no formato 000.000.000-00")]
-        public string CPF { get; set; }
+        [ValidateCPF(ErrorMessage = "CPF inválido")]
+        public string CPF
+        {
+            get => _cpf;
+            set => _cpf = Regex.Replace(value, @"\D", "");
+        }
 
-    }    
+        /// <summary>
+        /// Beneficiários
+        /// </summary>
+        public List<BeneficiarioModel> Beneficiarios { get; set; } = new List<BeneficiarioModel>();
+    }
 }
