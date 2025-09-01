@@ -24,8 +24,7 @@ $(document).ready(function () {
         const novoCpf = cpfFormatado(beneficiario.CPF);
 
         var novaLinha = `
-                    <tr>
-                    <td class="hidden-xs hidden">${beneficiario.Id}</td>
+                <tr data-id=${beneficiario.Id}>
                     <td>${novoCpf}</td>
                     <td>${beneficiario.Nome}</td>
                     <td class="text-center">
@@ -61,9 +60,9 @@ function alterarCliente() {
 
     $('#listaBeneficiarios tbody tr').each(function () {
         var beneficiario = {
-            Id: $(this).find('td:eq(0)').text().trim(),
-            CPF: $(this).find('td:eq(1)').text().trim(),
-            Nome: $(this).find('td:eq(2)').text().trim()
+            Id: $(this).data('id'),
+            CPF: $(this).find('td:eq(0)').text().trim(),
+            Nome: $(this).find('td:eq(1)').text().trim()
         };
         cliente.Beneficiarios.push(beneficiario);
     });

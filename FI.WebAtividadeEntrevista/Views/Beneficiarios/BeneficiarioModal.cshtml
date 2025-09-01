@@ -2,12 +2,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Beneficiários</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <div class="flex-row">
+                    <h4 class="modal-title">Beneficiários</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
-
             <div class="modal-body">
                 <form id="formIncluirBeneficiario" method="post">
                     <div class="row">
@@ -38,7 +39,6 @@
                     <table id="listaBeneficiarios" class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="text-center"></th>
                                 <th class="text-center">CPF</th>
                                 <th class="text-center">Nome</th>
                                 <th class="text-center">Ações</th>

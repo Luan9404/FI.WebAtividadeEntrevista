@@ -9,8 +9,7 @@ $(document).ready(function () {
         }
 
         var novaLinha = `
-            <tr>
-                <td class="hidden-xs hidden">0</td>
+            <tr data-id="0">
                 <td>${formatarCPF(cpf)}</td>
                 <td>${nome}</td>
                 <td class="text-center">
@@ -28,24 +27,37 @@ $(document).ready(function () {
 
     $('#listaBeneficiarios').on('click', '.btnExcluirBeneficiario', function () {
         const linha = $(this).closest('tr');
-        const id = parseInt(linha.find('td:eq(0)').text());
+        const id = parseInt(linha.data('id'));
 
         if (id > 0) {
-            if (confirm("Deseja realmente excluir este beneficiario?")) {
-                $.ajax({
-                    url: '/Cliente/DeletarBeneficiario',
-                    method: 'POST',
-                    data: { id: id },
-                    success: function (response) {
-                        linha.remove();
-                        ModalDialog("Sucesso", response);
+            $.ajax({
+                url: '/Cliente/DeletarBeneficiario',
+                method: 'POST',
+                data: { id: id },
+                success: function (response) {
+                    linha.remove();
+                    let random = Math.random().toString().replace('.', '');
+                    $('#incluirBeneficiarioModal .modal-dialog').append(`
+                        <div id="${random}" class="alert alert-success" style="margin-top:10px;" role="alert">
+                          Beneficiario removido com sucesso.
+                        </div>
+                    `)
+                    setTimeout(function () {
+                        $('#' + random).alert('close');
+                    }, 3000);
 
-                    },
-                    error: function (error) {
-                        ModalDialog("Erro", error.responseJSON);
-                    }
-                });
-            }
+                },
+                error: function (error) {
+                    $('#incluirBeneficiarioModal .modal-dialog').append(`
+                        <div id="${random}" class="alert alert-danger" style="margin-top:10px;" role="alert">
+                          Erro: ${error.responseJSON}.
+                        </div>
+                    `)
+                    setTimeout(function () {
+                        $('#' + random).alert('close');
+                    }, 3000);
+                }
+            });
         } else {
             linha.remove();
         }
@@ -53,8 +65,8 @@ $(document).ready(function () {
 
     $('#listaBeneficiarios').on('click', '.btnAlterarBeneficiario', function () {
         var linha = $(this).closest('tr');
-        var cpfColuna = linha.find('td:eq(1)');
-        var nomeColuna = linha.find('td:eq(2)');
+        var cpfColuna = linha.find('td:eq(0)');
+        var nomeColuna = linha.find('td:eq(1)');
 
         if (linha.hasClass('em-edicao')) {
             var novosValores = linha.find('input').map(function () {
@@ -67,8 +79,8 @@ $(document).ready(function () {
             $(this).text('Alterar').removeClass('btn-success');
             linha.removeClass('em-edicao');
         } else {
-            cpfColuna.html(`<div class="input-group"><input id="beneficiario_Alt_CPF" type="text" class="form-control" style="width: 13rem;" value="${cpfColuna.text()}"></div>`);
-            nomeColuna.html(`<div class="input-group"><input type="text" class="form-control" style="width: 150px;" value="${nomeColuna.text()}"></div>`);
+            cpfColuna.html(`<input id="beneficiario_Alt_CPF" type="text" class="form-control" style="width: 13rem;" value="${cpfColuna.text()}">`);
+            nomeColuna.html(`<input type="text" class="form-control" style="width: 150px;" value="${nomeColuna.text()}">`);
             $('#beneficiario_Alt_CPF').mask('000.000.000-00', { reverse: true });
 
             $(this).text('Salvar').addClass('btn-success');

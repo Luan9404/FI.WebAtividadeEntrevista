@@ -28,9 +28,9 @@ function incluirClientes() {
 
     $('#listaBeneficiarios tbody tr').each(function () {
         var beneficiario = {
-            Id: $(this).find('td:eq(0)').text().trim(),
-            CPF: $(this).find('td:eq(1)').text().trim(),
-            Nome: $(this).find('td:eq(2)').text().trim()
+            Id: $(this).data('id'),
+            CPF: $(this).find('td:eq(0)').text().trim(),
+            Nome: $(this).find('td:eq(1)').text().trim()
         };
 
         cliente.Beneficiarios.push(beneficiario);
